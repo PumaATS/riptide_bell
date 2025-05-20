@@ -27,7 +27,6 @@ client_scripts {
 
 server_scripts {
     'server/main.lua',
-    '@oxmysql/lib/MySQL.lua',
 }
 
 dependencies {
@@ -35,6 +34,5 @@ dependencies {
 }
 
 ox_libs {
-    'locale',
     'table',
 }
