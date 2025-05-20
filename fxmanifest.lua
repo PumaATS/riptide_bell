@@ -2,14 +2,14 @@
     Script Name : PD Reception
     Author      : Riptide Studios
     Copyright   : © 2025 Riptide Studios
-    Version     : 1.0.0.0
+    Version     : 1.0.1.0
     Description : This configuration file is not intended to be edited.
                   Unauthorized modifications may cause unexpected behavior.
 ]]
 
 name "riptide_bell"
 author "Riptide Studios"
-version "1.0.0.0"
+version "1.0.1.0"
 description "PD Reception Bell"
 fx_version "cerulean"
 game "gta5"
