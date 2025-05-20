@@ -7,8 +7,9 @@ This lightweight and easy-to-use script introduces a functional **reception bell
 ## ✨ Features
 
 - Immersive and practical front desk interaction for civilians  
-- Sends a notification to online police officers or configured job roles  
-- Includes optional support for [ps-dispatch](https://github.com/Project-Sloth/ps-dispatch) integration  
+- Sends a notification to online police officers or configured job roles
+- Players are able to apply to departments in-city. Completed applications are automatically sent to Discord via webhooks
+- Includes [ps-dispatch](https://github.com/Project-Sloth/ps-dispatch) integration  
 - Easily configurable bell placement for one or multiple PD locations  
 - Clean, optimized code with minimal performance impact
 
@@ -18,7 +19,7 @@ This lightweight and easy-to-use script introduces a functional **reception bell
 
 - [ox_lib](https://github.com/overextended/ox_lib)  
 - [qb-core](https://github.com/qbcore-framework/qb-core)  
-- Police job(s) **must** use the job type `"leo"` for notifications to work properly
+- [ps-dispatch](https://github.com/Project-Sloth/ps-dispatch)
 
 ---
 
@@ -39,28 +40,23 @@ This is a **plug-and-play** script. To install:
     ```cfg
     ensure ox_lib
     ensure qb-core
-    ensure riptide_bell
+    ensure riptide_reception
     ```
 
-3. **Make sure your police job(s)** have the `type = "leo"` set in their job configuration. Example:
-
-    ```lua
-    ['police'] = {
-        label = 'Police',
-        type = 'leo',
-        -- other config options
-    }
-    ```
-
-4. *(Optional)* Enable `ps-dispatch` integration in the config if you're using it.
-
-5. ✅ You're done! Players can now ring the reception bell and notify on-duty officers.
+3. ✅ You're done! Players can now ring the reception bell and notify on-duty officers.
 
 ---
 
 ## 🧩 Configuration
 
 Bell locations and notification settings can be easily customized through the provided config file. You can define multiple bell locations for different stations with full control over coordinates and behavior.
+
+---
+
+## Credits
+- [Jimathy666](https://github.com/jimathy) for the Version Check code
+- BettsPlays
+- CamMcH for helping out with the getCopCount() functions
 
 ---
 
