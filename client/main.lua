@@ -267,22 +267,37 @@ AddEventHandler('riptide_reception:client:application_form', function()
 end)
 
 CreateThread(function()
+    -- Wait until the game session is started
+    while not NetworkIsSessionStarted() do
+        Wait(100)
+    end
+
+    -- Wait for ox_lib to fully initialize (safe delay)
+    Wait(1000)
+
+    -- Register your context menu once
+    for _, v in ipairs(Config.Locations) do
+        lib.registerContext({
+            id = 'assistance_menu',
+            title = v.name,
+            options = v.options,
+        })
+    end
+
+    -- Main TextUI + interaction loop
     while true do
         Wait(1)
+
         local isOpen, text = lib.isTextUIOpen()
-        pCoords = GetEntityCoords(ped)
         local nearby = false
+        pCoords = GetEntityCoords(ped)
+
         for _, v in ipairs(Config.Locations) do
             local dst = #(pCoords - v.coords)
-            local opt = 
-            {
+            local opt = {
                 position = 'left-center'
             }
-            lib.registerContext({
-                id = 'assistance_menu',
-                title = v.name,
-                options = v.options,
-            })
+
             if dst < Config.min_dist then
                 if not text then
                     lib.showTextUI('[E] - Ring Bell', opt)
@@ -293,9 +308,9 @@ CreateThread(function()
                 nearby = true
             end
         end
-        
+
         if not nearby and text then
-           lib.hideTextUI()
+            lib.hideTextUI()
         end
     end
 end)
