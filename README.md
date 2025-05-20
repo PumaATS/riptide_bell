@@ -39,7 +39,7 @@ This is a **plug-and-play** script. To install:
     ```cfg
     ensure ox_lib
     ensure qb-core
-    ensure pd-reception-bell
+    ensure riptide_bell
     ```
 
 3. **Make sure your police job(s)** have the `type = "leo"` set in their job configuration. Example:
