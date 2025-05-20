@@ -5,6 +5,10 @@
     Version     : 1.0.3.0
     Description : This configuration file is not intended to be edited.
                   Unauthorized modifications may cause unexpected behavior.
+                  
+    IMPORTANT   : Some of the functions in this file are borrowed, with permission,
+                  from Jimathy666. Huge shout out to him for allowing us to use his
+                  code.
 ]]
 
 QBCore = exports['qb-core']:GetCoreObject()
@@ -95,6 +99,10 @@ RegisterNetEvent('riptide_reception:server:sendToDiscord')
 AddEventHandler('riptide_reception:server:sendToDiscord', function(color, name, input, footer, pingMessage, phone, webhook)
     sendApplicationToDiscord(color, name, input, footer, pingMessage, phone, webhook)
 end)
+
+---------------------------
+-- TAKEN FROM JIMATHY666 --
+---------------------------
 
 local function parseVersion(version)
     local parts = {}
