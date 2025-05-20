@@ -23,28 +23,28 @@ Config = {
     webhook = 'https://discord.com/api/webhooks/1374237554856951838/kDBDe4VaiDDcFdS7q4_48vpaDfHqdk_J_bAx-HRZ7pR-i1PYtvqo9aoLbr69eZVvDaGI' -- Used to send application form to discord
 }
 
-Config.Departments = {
+Config.Departments = { -- Department names for the menu title
     bcso = 'Blaine County Sheriff\'s Office',
     sast = 'San Andreas State Troopers',
     lspd = 'Los Santos Police Department',
     lscso = 'Los Santos County Sheriff\'s Office',
 }
 
-Config.Applications = {
+Config.Applications = { -- Department names for the application form button
     bcso = 'BCSO Application',
     sast = 'SAST Application',
     lspd = 'LSPD Application',
     lscso = 'LSCSO Application',
 }
 
-Config.Roles = {
+Config.Roles = { -- Config your roles here. These are the discord roles that will get pinged when an application is submitted
     bcso = '',
     sast = '1361417753294274601',
     lspd = '1364381959043809410',
     lscso = '',
 }
 
-Config.Webhooks = {
+Config.Webhooks = { -- Config your webhooks here. This is the webhook for the Discord channel that applications will be posted to
     bcso = '',
     sast = 'https://discord.com/api/webhooks/1374279458617430016/f2kkJhrkx1r35d2U7BBvnAdGX1vS3bxZgNppzJA8PmYb3eojqdx9EfCIlXQ32su-n4gf',
     lspd = 'https://discord.com/api/webhooks/1374279675391770624/EWd7M868aAZgzt1xADkuPIhtvVGuzWkBKXFv2uUDp7WFoV8P-5f0ejGRx9f-lf6OqN96',
