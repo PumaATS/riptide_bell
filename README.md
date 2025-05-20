@@ -29,7 +29,7 @@ This is a **plug-and-play** script. To install:
 1. **Download or clone the repository** into your server’s `resources` folder:
 
     ```bash
-    git clone https://github.com/your-username/pd-reception-bell.git
+    https://github.com/PumaATS/riptide_bell.git
     ```
 
     Or download and extract the ZIP file manually.
