@@ -2,12 +2,77 @@
     Script Name : PD Reception
     Author      : Riptide Studios
     Copyright   : © 2025 Riptide Studios
-    Version     : 1.0.1.0
+    Version     : 1.0.2.1
     Description : This configuration file is not intended to be edited.
                   Unauthorized modifications may cause unexpected behavior.
 ]]
 
 QBCore = exports['qb-core']:GetCoreObject()
+
+function checkWebhooks()
+    if Config.Webhooks.bcso == '' then
+        print("\27[31mA webhook is missing in: Config.Wehooks.bcso (config.lua > line 48)\27[0m")
+    else
+        print("\27[32mBCSO Webhook Active\27[0m")
+    end
+
+    if Config.Webhooks.sast == '' then
+        print("\27[31mA webhook is missing in: Config.Wehooks.sast (config.lua > line 49)\27[0m")
+    else
+        print("\27[32mSAST Webhook Active\27[0m")
+    end
+
+    if Config.Webhooks.lspd == '' then
+        print("\27[31mA webhook is missing in: Config.Wehooks.lspd (config.lua > line 50)\27[0m")
+    else
+        print("\27[32mLSPD Webhook Active\27[0m")
+    end
+
+    if Config.Webhooks.lscso == '' then
+        print("\27[31mA webhook is missing in: Config.Wehooks.lscso (config.lua > line 51)\27[0m")
+    else
+        print("\27[32mLSCSO Webhook Active\27[0m")
+    end
+end
+
+AddEventHandler('onResourceStart', function(resourceName)
+    if GetCurrentResourceName() ~= resourceName then return end
+    checkWebhooks()
+    Wait(4000)
+end)
+
+function sendApplicationToDiscord(color, name, input, footer, pingMessage, phone, webhook)
+    local fields = {
+        { name = "Name", value = input[1] or "N/A", inline = false },
+        { name = "Previous LEO Experience", value = input[2] or "N/A", inline = false },
+        { name = "High-Stress Example", value = input[3] or "N/A", inline = false },
+        { name = "Qualities/Skills", value = input[4] or "N/A", inline = false },
+        { name = "Understands Rejection Possibility", value = input[5] or "N/A", inline = false },
+        { name = "Additional Info", value = input[6] or "N/A", inline = false },
+        { name = "Discord", value = input[7] or "N/A", inline = false },
+        { name = "Phone", value = phone or "N/A", inline = false },
+    }
+
+    local embed = {{
+        color = color,
+        title = "**" .. name .. "**",
+        fields = fields,
+        footer = {
+            text = footer,
+        },
+    }}
+
+    PerformHttpRequest(webhook, function(err, text, headers) end, 'POST', json.encode({
+        content = pingMessage,
+        username = name,
+        embeds = embed
+    }), { ['Content-Type'] = 'application/json' })
+end
+
+RegisterNetEvent('riptide_bell:server:sendToDiscord')
+AddEventHandler('riptide_bell:server:sendToDiscord', function(color, name, input, footer, pingMessage, phone, webhook)
+    sendApplicationToDiscord(color, name, input, footer, pingMessage, phone, webhook)
+end)
 
 local function parseVersion(version)
     local parts = {}

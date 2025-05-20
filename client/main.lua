@@ -2,7 +2,7 @@
     Script Name : PD Reception
     Author      : Riptide Studios
     Copyright   : © 2025 Riptide Studios
-    Version     : 1.0.1.0
+    Version     : 1.0.2.1
     Description : This configuration file is not intended to be edited.
                   Unauthorized modifications may cause unexpected behavior.
 ]]
@@ -10,6 +10,7 @@
 QBCore = exports['qb-core']:GetCoreObject()
 local ped = PlayerPedId()
 local pCoords
+local data
 
 function getCopCount()
     local leo = 0
@@ -25,6 +26,16 @@ function getCopCount()
     end
     return leo
 end
+
+RegisterNetEvent('riptide_bell:client:getPhone')
+AddEventHandler('riptide_bell:client:getPhone', function()
+    local playerPhone = 0
+    for _, playerId in ipairs(QBCore.Functions.GetPlayers()) do
+        local Player = QBCore.Functions.GetPlayers(playerId)
+        playerPhone = Player.PlayerData.phone
+    end
+    return playerPhone
+end)
 
 RegisterNetEvent('riptide_bell:client:assistance_requested')
 AddEventHandler('riptide_bell:client:assistance_requested', function()
@@ -46,6 +57,16 @@ AddEventHandler('riptide_bell:client:insufficient_cops', function()
     })
 end)
 
+RegisterNetEvent('riptide_bell:client:application_success')
+AddEventHandler('riptide_bell:client:application_success', function()
+    return lib.notify({
+        title = 'Application sent',
+        description = 'Thank you for applying!',
+        position = 'center-right',
+        type = 'success'
+    })
+end)
+
 RegisterNetEvent('riptide_bell:client:request_supervisor')
 AddEventHandler('riptide_bell:client:request_supervisor', function()
     if getCopCount() == 0 then
@@ -53,6 +74,29 @@ AddEventHandler('riptide_bell:client:request_supervisor', function()
             local dispatchData =
             {
                 message = "Supervisor Requested",
+                codeName = "911call",
+                code = "Bell",
+                icon = "fas fa-phone",
+                priority = 2,
+                coords = pCoords,
+                street = GetStreetAndZone(pCoords),
+                jobs = { 'leo' }
+            }
+            TriggerServerEvent("ps-dispatch:server:notify", dispatchData)
+        end
+        TriggerEvent("riptide_bell:client:assistance_requested")
+    else
+        TriggerEvent("riptide_bell:client:insufficient_cops")
+    end
+end)
+
+RegisterNetEvent('riptide_bell:client:request_officer')
+AddEventHandler('riptide_bell:client:request_officer', function()
+    if getCopCount() == 0 then
+        if GetResourceState("ps-dispatch") == "started" then
+            local dispatchData =
+            {
+                message = "Officer Requested",
                 codeName = "911call",
                 code = "Bell",
                 icon = "fas fa-phone",
@@ -144,7 +188,6 @@ AddEventHandler('riptide_bell:client:report_property', function()
         local input = lib.inputDialog('Report Lost / Stolen Property', {'Your name', 'Description'})
  
         if not input then return end
-        print(json.encode(input), input[1], input[2])
         if GetResourceState("ps-dispatch") == "started" then
             local dispatchData =
             {
@@ -165,6 +208,44 @@ AddEventHandler('riptide_bell:client:report_property', function()
     else
         TriggerEvent("riptide_bell:client:insufficient_cops")
     end
+end)
+
+RegisterNetEvent('riptide_bell:client:application_form')
+AddEventHandler('riptide_bell:client:application_form', function()
+    local v3loc = GetEntityCoords(ped)
+
+    local input = lib.inputDialog('Apply for LEO', {
+        'Your name',
+        'Do you have previous experience with LEO?',
+        'If you answered yes, can you provide an example of when you were in a high-stress environment and how you dealt with the situation?',
+        'What qualities and skills can you bring to San Andreas State Troopers?',
+        'Do you understand that your application could get rejected without reason?',
+        'Is there anything else you would like us to know?',
+        'Please enter your Discord username so we can contact you if you aren\'t in city',
+    }) 
+
+    if not input then return end
+
+    local phone = nil
+    local Player = QBCore.Functions.GetPlayerData()
+    if Player and Player.charinfo and Player.charinfo.phone then
+        phone = Player.charinfo.phone
+    else
+        phone = "N/A"
+    end
+
+    for _, v in ipairs(Config.Locations) do
+        local dist = #(v3loc - v.coords)
+        if dist < Config.min_dist then
+            local appName = v.webhook_name
+            local webhook = v.webhook
+            local ping = "**A new application has been submitted** <@&" .. v.role .. ">"
+            -- Send all info including phone number
+            TriggerServerEvent('riptide_bell:server:sendToDiscord', 16753920, appName, input, "New application submitted", ping, phone, webhook)
+        end
+    end
+
+    TriggerEvent("riptide_bell:client:application_success")
 end)
 
 CreateThread(function()
@@ -191,6 +272,12 @@ CreateThread(function()
                         event = 'riptide_bell:client:request_supervisor',
                     },
                     {
+                        title = 'Request Officer',
+                        description = 'Request to talk to an officer',
+                        icon = 'fa-solid fa-user',
+                        event = 'riptide_bell:client:request_officer',
+                    },
+                    {
                         title = 'Apply for Weapon License',
                         description = 'Request an officer to apply for a weapon license',
                         icon = 'fa-solid fa-gun',
@@ -213,6 +300,13 @@ CreateThread(function()
                         description = 'Lost property, or has your property been stolen? Report it now!',
                         icon = 'fa-solid fa-flag',
                         event = 'riptide_bell:client:report_property',
+                    },
+                    {
+                        title = 'Apply for ' .. v.department,
+                        description = 'Want to apply to become an officer? Send in your application now!',
+                        icon = 'check',
+                        event = 'riptide_bell:client:application_form',
+                        -- disabled = true,
                     },
                 }
             })
