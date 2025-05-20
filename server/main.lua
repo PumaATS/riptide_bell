@@ -2,7 +2,7 @@
     Script Name : PD Reception
     Author      : Riptide Studios
     Copyright   : © 2025 Riptide Studios
-    Version     : 1.0.2.1
+    Version     : 1.0.3.0
     Description : This configuration file is not intended to be edited.
                   Unauthorized modifications may cause unexpected behavior.
 ]]
@@ -11,25 +11,25 @@ QBCore = exports['qb-core']:GetCoreObject()
 
 function checkWebhooks()
     if Config.Webhooks.bcso == '' then
-        print("\27[31mA webhook is missing in: Config.Wehooks.bcso (config.lua > line 48)\27[0m")
+        print("\27[31mA webhook is missing in: Config.Wehooks.bcso (config.lua > line 52)\27[0m")
     else
         print("\27[32mBCSO Webhook Active\27[0m")
     end
 
     if Config.Webhooks.sast == '' then
-        print("\27[31mA webhook is missing in: Config.Wehooks.sast (config.lua > line 49)\27[0m")
+        print("\27[31mA webhook is missing in: Config.Wehooks.sast (config.lua > line 53)\27[0m")
     else
         print("\27[32mSAST Webhook Active\27[0m")
     end
 
     if Config.Webhooks.lspd == '' then
-        print("\27[31mA webhook is missing in: Config.Wehooks.lspd (config.lua > line 50)\27[0m")
+        print("\27[31mA webhook is missing in: Config.Wehooks.lspd (config.lua > line 54)\27[0m")
     else
         print("\27[32mLSPD Webhook Active\27[0m")
     end
 
     if Config.Webhooks.lscso == '' then
-        print("\27[31mA webhook is missing in: Config.Wehooks.lscso (config.lua > line 51)\27[0m")
+        print("\27[31mA webhook is missing in: Config.Wehooks.lscso (config.lua > line 55)\27[0m")
     else
         print("\27[32mLSCSO Webhook Active\27[0m")
     end
@@ -41,10 +41,32 @@ AddEventHandler('onResourceStart', function(resourceName)
     Wait(4000)
 end)
 
+QBCore.Functions.CreateCallback('riptide_reception:getCopCount', function(source, cb)
+    local count = 0
+    local jobWhitelist = {}
+
+    -- Build a quick lookup table from Config.JobCheck.jobs
+    for _, jobName in ipairs(Config.JobCheck.jobs) do
+        jobWhitelist[jobName] = true
+    end
+
+    for _, playerId in ipairs(QBCore.Functions.GetPlayers()) do
+        local Player = QBCore.Functions.GetPlayer(playerId)
+        if Player and Player.PlayerData and Player.PlayerData.job then
+            local job = Player.PlayerData.job
+            if jobWhitelist[job.name] and job.onduty then
+                count = count + 1
+            end
+        end
+    end
+
+    cb(count)
+end)
+
 function sendApplicationToDiscord(color, name, input, footer, pingMessage, phone, webhook)
     local fields = {
         { name = "Name", value = input[1] or "N/A", inline = false },
-        { name = "Previous LEO Experience", value = input[2] or "N/A", inline = false },
+        { name = "Previous Experience", value = input[2] or "N/A", inline = false },
         { name = "High-Stress Example", value = input[3] or "N/A", inline = false },
         { name = "Qualities/Skills", value = input[4] or "N/A", inline = false },
         { name = "Understands Rejection Possibility", value = input[5] or "N/A", inline = false },
@@ -69,8 +91,8 @@ function sendApplicationToDiscord(color, name, input, footer, pingMessage, phone
     }), { ['Content-Type'] = 'application/json' })
 end
 
-RegisterNetEvent('riptide_bell:server:sendToDiscord')
-AddEventHandler('riptide_bell:server:sendToDiscord', function(color, name, input, footer, pingMessage, phone, webhook)
+RegisterNetEvent('riptide_reception:server:sendToDiscord')
+AddEventHandler('riptide_reception:server:sendToDiscord', function(color, name, input, footer, pingMessage, phone, webhook)
     sendApplicationToDiscord(color, name, input, footer, pingMessage, phone, webhook)
 end)
 
@@ -97,10 +119,10 @@ end
 function checkVersion()
     CreateThread(function()
         Wait(4000)
-        local currentVersionRaw = GetResourceMetadata("riptide_bell", 'version')
-        PerformHttpRequest('https://raw.githubusercontent.com/PumaATS/riptide_bell/main/version.txt', function(err, body, headers)
+        local currentVersionRaw = GetResourceMetadata("riptide_reception", 'version')
+        PerformHttpRequest('https://raw.githubusercontent.com/PumaATS/riptide_reception/main/version.txt', function(err, body, headers)
             if not body then
-                print("^Unable to run version check for ^7'^3riptide_bell^7' (^3"..currentVersionRaw.."^7)")
+                print("^Unable to run version check for ^7'^3riptide_reception^7' (^3"..currentVersionRaw.."^7)")
             end
 
             local lines = {}
