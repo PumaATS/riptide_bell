@@ -2,7 +2,7 @@
     Script Name : PD Reception
     Author      : Riptide Studios
     Copyright   : © 2025 Riptide Studios
-    Version     : 1.0.3.0
+    Version     : 1.0.3.5
     Description : This configuration file is editable.
                   Feel free to modify the settings as needed.
 ]]
@@ -20,7 +20,9 @@ Config = {
 
     min_dist = 2,
 
-    webhook = 'https://discord.com/api/webhooks/1374237554856951838/kDBDe4VaiDDcFdS7q4_48vpaDfHqdk_J_bAx-HRZ7pR-i1PYtvqo9aoLbr69eZVvDaGI' -- Used to send application form to discord
+    webhook = '', -- Used to send application form to discord
+
+    UseTarget = true,
 }
 
 Config.JobCheck = {
@@ -43,15 +45,15 @@ Config.Applications = { -- Department names for the application form button
 
 Config.Roles = { -- Config your roles here. These are the discord roles that will get pinged when an application is submitted
     bcso = '',
-    sast = '1361417753294274601',
-    lspd = '1364381959043809410',
+    sast = '',
+    lspd = '',
     lscso = '',
 }
 
 Config.Webhooks = { -- Config your webhooks here. This is the webhook for the Discord channel that applications will be posted to
     bcso = '',
-    sast = 'https://discord.com/api/webhooks/1374279458617430016/f2kkJhrkx1r35d2U7BBvnAdGX1vS3bxZgNppzJA8PmYb3eojqdx9EfCIlXQ32su-n4gf',
-    lspd = 'https://discord.com/api/webhooks/1374279675391770624/EWd7M868aAZgzt1xADkuPIhtvVGuzWkBKXFv2uUDp7WFoV8P-5f0ejGRx9f-lf6OqN96',
+    sast = '',
+    lspd = '',
     lscso = '',
 }
 
