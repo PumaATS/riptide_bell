@@ -30,7 +30,7 @@ This is a **plug-and-play** script. To install:
 1. **Download or clone the repository** into your server’s `resources` folder:
 
     ```bash
-    https://github.com/PumaATS/riptide_bell.git
+    https://github.com/PumaATS/riptide_reception.git
     ```
 
     Or download and extract the ZIP file manually.
