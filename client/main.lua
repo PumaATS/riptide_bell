@@ -2,7 +2,7 @@
     Script Name : PD Reception
     Author      : Riptide Studios
     Copyright   : © 2025 Riptide Studios
-    Version     : 1.0.3.0
+    Version     : 1.0.3.5
     Description : This configuration file is not intended to be edited.
                   Unauthorized modifications may cause unexpected behavior.
 ]]
@@ -266,38 +266,50 @@ AddEventHandler('riptide_reception:client:application_form', function()
     TriggerEvent("riptide_reception:client:application_success")
 end)
 
-CreateThread(function()
-    -- Wait until the game session is started
-    while not NetworkIsSessionStarted() do
-        Wait(100)
-    end
-
-    -- Wait for ox_lib to fully initialize (safe delay)
-    Wait(1000)
-
-    -- Register your context menu once
+function CreateTargets()
     for _, v in ipairs(Config.Locations) do
         lib.registerContext({
             id = 'assistance_menu',
-            title = v.name,
+            title = 'Request Assistance',
             options = v.options,
         })
     end
-
-    -- Main TextUI + interaction loop
-    while true do
-        Wait(1)
-
+    if Config.UseTarget then
+        for k, v in pairs(Config.Locations) do
+            exports['qb-target']:AddBoxZone('reception' .. k, v.coords, 1, 1, {
+                name = 'reception' .. k,
+                minZ = v.coords.z - 1,
+                maxZ = v.coords.z + 1,
+                debugPoly = false,
+            }, {
+                options = {
+                    {
+                        type = 'client',
+                        icon = 'fa-solid fa-bell',
+                        label = 'Ring Bell',
+                        action = function()
+                            lib.showContext('assistance_menu')
+                        end,
+                        canInteract = function()
+                            if v['isOpened'] or v['isBusy'] then
+                                return false
+                            end
+                            return true
+                        end,
+                    }
+                },
+                distance = 1.5
+            })
+        end
+    else
         local isOpen, text = lib.isTextUIOpen()
         local nearby = false
-        pCoords = GetEntityCoords(ped)
 
         for _, v in ipairs(Config.Locations) do
             local dst = #(pCoords - v.coords)
             local opt = {
                 position = 'left-center'
             }
-
             if dst < Config.min_dist then
                 if not text then
                     lib.showTextUI('[E] - Ring Bell', opt)
@@ -312,5 +324,13 @@ CreateThread(function()
         if not nearby and text then
             lib.hideTextUI()
         end
+    end
+end
+
+CreateThread(function()
+    while true do
+        Wait(1)
+        pCoords = GetEntityCoords(ped)
+        CreateTargets()
     end
 end)
