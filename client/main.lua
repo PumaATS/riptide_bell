@@ -2,13 +2,12 @@
     Script Name : PD Reception
     Author      : Riptide Studios
     Copyright   : © 2025 Riptide Studios
-    Version     : 1.0.3.5
+    Version     : 1.0.3.6
     Description : This configuration file is not intended to be edited.
                   Unauthorized modifications may cause unexpected behavior.
 ]]
 
 QBCore = exports['qb-core']:GetCoreObject()
-local ped = PlayerPedId()
 local pCoords
 local data
 
@@ -239,6 +238,8 @@ end)
 
 RegisterNetEvent('riptide_reception:client:application_form')
 AddEventHandler('riptide_reception:client:application_form', function()
+    print("[DEBUG] Application form event triggered")
+    local ped = PlayerPedId()
     local v3loc = GetEntityCoords(ped)
 
     local phone = nil
@@ -259,25 +260,24 @@ AddEventHandler('riptide_reception:client:application_form', function()
             local webhook = v.webhook
             local ping = "**A new application has been submitted** <@&" .. v.role .. ">"
             -- Send all info including phone number
-            TriggerServerEvent('riptide_reception:server:sendToDiscord', v.webhook_color, appName, input, "New application submitted", ping, phone, webhook)
+            TriggerServerEvent('riptide_reception:server:sendToDiscord', v.webhook_color, appName, input, "Reception Bell v1.0.3.6 by Riptide Studios", ping, phone, webhook)
+            TriggerEvent("riptide_reception:client:application_success")
         end
     end
-
-    TriggerEvent("riptide_reception:client:application_success")
 end)
 
 function CreateTargets()
-    for _, v in ipairs(Config.Locations) do
+    for index, v in ipairs(Config.Locations) do
+        local contextId = 'assistance_menu_' .. index
         lib.registerContext({
-            id = 'assistance_menu',
-            title = 'Request Assistance',
+            id = contextId,
+            title = v.name,
             options = v.options,
         })
-    end
-    if Config.UseTarget then
-        for k, v in pairs(Config.Locations) do
-            exports['qb-target']:AddBoxZone('reception' .. k, v.coords, 1, 1, {
-                name = 'reception' .. k,
+
+        if Config.UseTarget then
+            exports['qb-target']:AddBoxZone('reception' .. index, v.coords, 1, 1, {
+                name = 'reception' .. index,
                 minZ = v.coords.z - 1,
                 maxZ = v.coords.z + 1,
                 debugPoly = false,
@@ -288,49 +288,24 @@ function CreateTargets()
                         icon = 'fa-solid fa-bell',
                         label = 'Ring Bell',
                         action = function()
-                            lib.showContext('assistance_menu')
-                        end,
-                        canInteract = function()
-                            if v['isOpened'] or v['isBusy'] then
-                                return false
-                            end
-                            return true
+                            lib.showContext(contextId)
                         end,
                     }
                 },
                 distance = 1.5
             })
         end
-    else
-        local isOpen, text = lib.isTextUIOpen()
-        local nearby = false
-
-        for _, v in ipairs(Config.Locations) do
-            local dst = #(pCoords - v.coords)
-            local opt = {
-                position = 'left-center'
-            }
-            if dst < Config.min_dist then
-                if not text then
-                    lib.showTextUI('[E] - Ring Bell', opt)
-                end
-                if IsControlJustReleased(0, 38) then
-                    lib.showContext('assistance_menu')
-                end
-                nearby = true
-            end
-        end
-
-        if not nearby and text then
-            lib.hideTextUI()
-        end
     end
 end
 
 CreateThread(function()
+    while not Config.Locations or #Config.Locations == 0 do
+        Wait(100)
+    end
+
     while true do
         Wait(1)
-        pCoords = GetEntityCoords(ped)
+        pCoords = GetEntityCoords(PlayerPedId())
         CreateTargets()
     end
 end)
