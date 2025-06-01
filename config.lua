@@ -2,7 +2,7 @@
     Script Name : PD Reception
     Author      : Riptide Studios
     Copyright   : © 2025 Riptide Studios
-    Version     : 1.0.3.5
+    Version     : 1.0.3.6
     Description : This configuration file is editable.
                   Feel free to modify the settings as needed.
 ]]
@@ -19,8 +19,6 @@ Config = {
     drawText = "ox_lib",        -- "qb", "ox_lib"
 
     min_dist = 2,
-
-    webhook = '', -- Used to send application form to discord
 
     UseTarget = true,
 }
@@ -59,13 +57,13 @@ Config.Webhooks = { -- Config your webhooks here. This is the webhook for the Di
 
 Config.Questions = {
     [1] = {
-        'Your name',
-        'Do you have previous experience with LEO?',
-        'If you answered yes, can you provide an example of when you were in a high-stress environment and how you dealt with the situation?',
-        'What qualities and skills can you bring to San Andreas State Troopers?',
-        'Do you understand that your application could get rejected without reason?',
-        'Is there anything else you would like us to know?',
-        'Please enter your Discord username so we can contact you if you aren\'t in city',
+        { type = "input", label = "Your name", required = true },
+        { type = "textarea", label = "Do you have previous experience with LEO?", required = true },
+        { type = "textarea", label = "If you answered yes, can you provide an example of when you were in a high-stress environment and how you dealt with the situation?", required = true },
+        { type = "textarea", label = "What qualities and skills can you bring to San Andreas State Troopers?", required = true },
+        { type = "input", label = "Do you understand that your application could get rejected without reason?", required = true },
+        { type = "textarea", label = "Is there anything else you would like us to know?", required = false },
+        { type = "input", label = "Please enter your Discord username so we can contact you if you aren't in city", required = true },
     },
 }
 
@@ -130,7 +128,6 @@ Config.Buttons = {
             description = 'Want to join the department? Send in your application now!',
             icon = 'check',
             event = 'riptide_reception:client:application_form',
-            -- disabled = true,
         },
     }
 }
