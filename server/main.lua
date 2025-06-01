@@ -2,7 +2,7 @@
     Script Name : PD Reception
     Author      : Riptide Studios
     Copyright   : © 2025 Riptide Studios
-    Version     : 1.0.3.5
+    Version     : 1.0.3.6
     Description : This configuration file is not intended to be edited.
                   Unauthorized modifications may cause unexpected behavior.
                   
